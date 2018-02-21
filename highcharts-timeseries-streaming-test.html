@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>  
+        <script src="https://code.highcharts.com/modules/boost.js"></script>
+    </head>
+    <body>
+            <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+        <script>
+            
+                
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                Highcharts.chart('container', {
+                    boost: {
+                        enabled: true,
+                        useGPUTranslations: true,
+                        boostThreshold: 1,
+                    },
+                    chart: {
+                        type: 'spline',
+                        animation: false, // don't animate in old IE
+                        marginRight: 10,
+                        
+                    },
+                    title: {
+                        text: 'Live random data'
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Value'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        formatter: function () {
+                            return '<b>' + this.series.name + '</b><br/>' +
+                                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                                Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'Random data',
+                        data: [{x: + new Date(), y: null}]
+                    }]
+                });
+                
+                var chart = $('#container').highcharts();
+                chart.addSeries({"name": "example","data":[]});
+                
+                addPoint = function(){
+                    const timestamp = + new Date();
+                    var newData = {x: timestamp, y: Math.floor(Math.random() * 1000) + 1 };
+                    chart.series[0].addPoint(newData, true, chart.series[0].data.length > 2000);
+                                    
+                }
+
+                setInterval(addPoint,100);
+        </script>
+    </body>
+</html>
